@@ -86,6 +86,18 @@ class GradeViewModelTest {
     }
 
     @Test
+    fun `el texto NaN se convierte a numero pero el dominio lo rechaza`() {
+        // "NaN".toDoubleOrNull() no devuelve null: es un Double valido, por eso la validacion del rango es necesaria
+        assertTrue("NaN".toDoubleOrNull()?.isNaN() == true)
+
+        fillForm("Laboratorio", "Programación Móvil", "NaN")
+        viewModel.onSaveGrade()
+
+        assertTrue(viewModel.uiState.value is GradeUiState.Error)
+        assertEquals(3, repository.grades.value.size)
+    }
+
+    @Test
     fun `acepta la coma decimal`() {
         fillForm("Laboratorio", "Programación Móvil", "8,5")
         viewModel.onSaveGrade()
